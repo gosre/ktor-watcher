@@ -1,6 +1,7 @@
 ktor:
     application:
         modules:
-            - me.claytonw.ApplicationKt.module
+            - me.claytonw.ApplicationKt.server
+            - me.claytonw.ApplicationKt.watcher
     deployment:
         port: 8080

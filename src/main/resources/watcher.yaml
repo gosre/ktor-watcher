@@ -1,0 +1,7 @@
+targets:
+    - name: "Personal Website"
+      host: "https://claytonw.me"
+      interval: "*/5 * * * *"
+    - name: "Google"
+      host: "https://google.com"
+      interval: "*/10 * * * *"

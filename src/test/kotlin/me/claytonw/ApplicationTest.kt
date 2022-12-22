@@ -1,20 +1,20 @@
 package me.claytonw
 
-import io.ktor.http.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import kotlin.test.*
-import io.ktor.server.testing.*
+import com.charleskorn.kaml.Yaml
+import me.claytonw.watcher.config.WatcherConfiguration
+import me.claytonw.watcher.config.WatcherTarget
+import org.junit.Test
 
 class ApplicationTest {
+
     @Test
-    fun testRoot() = testApplication {
-        application {
-            //configureRouting()
-        }
-        client.get("/").apply {
-            assertEquals(HttpStatusCode.OK, status)
-            assertEquals("Hello World!", bodyAsText())
-        }
+    fun testKamlEncoding() {
+        val targets = mutableListOf<WatcherTarget>()
+        targets.add(WatcherTarget("Personal Website", "https://claytonw.me", "*/5 * * * *"))
+
+        val config = WatcherConfiguration(targets)
+        val result = Yaml.default.encodeToString(WatcherConfiguration.serializer(), config)
+        println(result)
     }
+
 }
