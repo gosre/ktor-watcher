@@ -1,0 +1,61 @@
+$primary_color: #0D1117;
+$secondary_color: #c9d1d9;
+
+body {
+	padding: 0px !important;
+	margin: 0px !important;
+	background-color: $primary_color;
+    color: $secondary_color;
+}
+
+h1 {
+	text-align: center;
+}
+
+.container {
+	max-width: 960px;
+    margin: 0 auto;
+}
+
+#watchers {
+    margin-top: 50px;
+}
+
+.watcher {
+
+    span.status {
+        float: right;
+    }
+
+    .days {
+        border: 1px solid #343942;
+        border-radius: 5px;
+        height: 40px;
+        margin: 0 auto;
+        padding: 0;
+        overflow: hidden;
+        width: 100%;
+
+        rect {
+            height: 100%;
+            width: 3px;
+        }
+
+        rect.grey {
+            fill: #343942;
+        }
+
+        rect.green {
+            fill: #2ea043;
+        }
+
+        rect.red {
+            fill: #da3633;
+        }
+
+        rect:hover {
+            fill: #4188cf;
+        }
+
+    }
+}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:fragment="head">
+    <title>Ktor Watcher</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
+    <link rel="stylesheet" href="/static/style/style.min.css" th:href="@{style/style.min.css}">
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.js" defer></script>
+    <script th:inline="javascript">
+        var watchers = /*[[${watchers}]]*/ '[]';
+
+        function getWatcher(key) {
+            for (const watcher of watchers) {
+                if (watcher.pk == key) {
+                    return watcher;
+                }
+            }
+            return null;
+        }
+
+        $(document).ready(function() {
+            //configure informational tooltips for each day
+            $('rect').each(function(index) {
+                const rect = $(this);
+                const watcher = getWatcher(rect.data("key"));
+                if (watcher != null) {
+                    const day = watcher.days[rect.data("day")]
+                    var content = "No data exists for this day.";
+                    if (day.exists) {
+                        if (day.downtime > 0) {
+                            content = "There has been downtime!";
+                        } else {
+                            content = "No downtime recorded for this day.";
+                        }
+                    }
+                    rect.popup({
+                        title: day.date,
+                        content: content
+                    });
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div id="watchers">
+            <div class="ui grid watcher" th:fragment="watcher(watcher)">
+                <div class="two column row">
+                    <div class="column">
+                        <span class="name" th:text="${watcher.name}">Watcher Name</span>
+                    </div>
+                    <div class="column">
+                        <span class="status">Status: N/A</span>
+                    </div>
+                </div>
+                <div class="sixteen wide column">
+                    <svg class="days" viewBox="0 0 448 40" preserveAspectRatio="none">
+                        <rect th:each="day, iStat : ${watcher.days}" th:classappend="${day.exists}? ((${day.downtime} &gt; 0)? red : green) : grey" th:x="(${day_count} - ${iStat.index} - 1) * 5" th:data-key="${watcher.pk}" th:data-day="${iStat.index}"></rect>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -5,3 +5,6 @@ ktor:
             - me.claytonw.ApplicationKt.watcher
     deployment:
         port: 8080
+        watch:
+            - classes
+            - resources
