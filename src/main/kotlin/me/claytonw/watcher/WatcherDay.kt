@@ -7,6 +7,6 @@ class WatcherDay(
     val date: LocalDate = LocalDate.now(DateTimeZone.UTC)
 ) {
 
-    var downTime: Int = 0
+    var downTimeMinutes: Int = 0
 
 }

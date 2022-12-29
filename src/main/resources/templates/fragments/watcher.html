@@ -18,6 +18,18 @@
             return null;
         }
 
+        Number.prototype.minutesToTime = function() {
+            var hours   = Math.floor(this / 60);
+            var minutes = this % 60;
+            if (hours < 10) {
+                hours = "0" + hours;
+            }
+            if (minutes < 10) {
+                minutes = "0" + minutes;
+            }
+            return hours + 'h ' + minutes + "min"
+        }
+
         $(document).ready(function() {
             //configure informational tooltips for each day
             $('rect').each(function(index) {
@@ -28,7 +40,7 @@
                     var content = "No data exists for this day.";
                     if (day.exists) {
                         if (day.downtime > 0) {
-                            content = "There has been downtime!";
+                            content = "Downtime: " + day.downtime.minutesToTime();
                         } else {
                             content = "No downtime recorded for this day.";
                         }
@@ -51,7 +63,7 @@
                         <span class="name" th:text="${watcher.name}">Watcher Name</span>
                     </div>
                     <div class="column">
-                        <span class="status">Status: N/A</span>
+                        <span class="status">Status: <span th:text="${watcher.status}"></span></span>
                     </div>
                 </div>
                 <div class="sixteen wide column">

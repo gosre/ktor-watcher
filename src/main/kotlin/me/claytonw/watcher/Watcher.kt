@@ -9,6 +9,8 @@ import java.util.LinkedList
 
 class Watcher(private val target: WatcherTarget) {
 
+    var status: WatcherStatus = WatcherStatus.OPERATIONAL
+
     private val days = LinkedList<WatcherDay>()
 
     fun today(): WatcherDay {
@@ -31,14 +33,14 @@ class Watcher(private val target: WatcherTarget) {
      */
     fun model(): WatcherModel {
         val daysFilled = days
-            .map { WatcherDayModel(it.date, true, it.downTime) }
+            .map { WatcherDayModel(it.date, true, it.downTimeMinutes) }
             .toMutableList()
         var last: LocalDate
         for (i in 1..(STORED_HISTORY - daysFilled.size)) {
             last = days.lastOrNull()?.date ?: LocalDate.now(DateTimeZone.UTC).plusDays(1)
             daysFilled.add(WatcherDayModel(last.minusDays(i), false, 0))
         }
-        return WatcherModel("${target.name.hashCode()}", target.name, daysFilled)
+        return WatcherModel("${target.name.hashCode()}", target.name, status.name.lowercase().replaceFirstChar { it.uppercase() }, daysFilled)
     }
 
     companion object {

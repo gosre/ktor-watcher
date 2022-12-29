@@ -18,6 +18,7 @@ import me.claytonw.plugins.configureThymeleaf
 import me.claytonw.plugins.configureRouting
 import me.claytonw.plugins.configureSerialization
 import me.claytonw.watcher.Watcher
+import me.claytonw.watcher.WatcherStatus
 import me.claytonw.watcher.config.WatcherConfiguration
 import java.io.File
 
@@ -38,6 +39,7 @@ fun Application.watcher() {
         val watcher = Watcher(target)
         Watcher.watchers.add(watcher)
         launch {
+            var currentInterval = target.interval
             while (true) {
                 val response = client.request(target.host) {
                     method = HttpMethod.Get
@@ -45,11 +47,27 @@ fun Application.watcher() {
                     //also some servers are not configured properly to respond to them
                 }
                 val today = watcher.today()
-                if (response.status != HttpStatusCode.OK) {
-                    today.downTime++
+                if (response.status == HttpStatusCode.OK) {
+                    if (watcher.status == WatcherStatus.OFFLINE) {
+                        //host was previously down but is now OK
+                        log.debug("Host '${target.name}' was previously offline, but now online again.")
+                        watcher.status = WatcherStatus.OPERATIONAL
+                        currentInterval = target.interval
+                    }
+                } else {
+                    if (watcher.status == WatcherStatus.OPERATIONAL) {
+                        //host is now offline. Change state and check again at a faster interval
+                        log.debug("Host '${target.name}' is now offline!")
+                        watcher.status = WatcherStatus.OFFLINE
+                        currentInterval = 1
+                    } else {
+                        log.debug("Host '${target.name}' remains offline.")
+                    }
+                    //increment down counter by 1 minute
+                    today.downTimeMinutes++
                 }
-                println("Status for ${target.name}: ${response.status}")
-                delay(target.interval * 60_000L)
+                log.debug("Status for '${target.name}': ${response.status}")
+                delay(currentInterval * 60_000L)
             }
         }
     }

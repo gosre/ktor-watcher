@@ -6,6 +6,7 @@ import org.joda.time.format.ISODateTimeFormat
 data class WatcherModel(
     val pk: String,
     val name: String,
+    val status: String,
     val days: List<WatcherDayModel>
 )
 
