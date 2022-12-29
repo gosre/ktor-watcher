@@ -6,4 +6,4 @@ import kotlinx.serialization.Serializable
 data class WatcherConfiguration(val targets: List<WatcherTarget>)
 
 @Serializable
-data class WatcherTarget(val name: String, val host: String, val interval: String)
+data class WatcherTarget(val name: String, val host: String, val interval: Int)

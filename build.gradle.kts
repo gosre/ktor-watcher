@@ -37,7 +37,6 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
     implementation("com.charleskorn.kaml:kaml:$kaml_verison")
-    implementation("dev.inmo:krontab:$krontab_version")
     implementation("joda-time:joda-time:$joda_version")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
