@@ -2,6 +2,7 @@ package me.claytonw.watcher
 
 import me.claytonw.model.WatcherDayModel
 import me.claytonw.model.WatcherModel
+import me.claytonw.util.ext.nameFormatted
 import me.claytonw.watcher.config.WatcherTarget
 import org.joda.time.DateTimeZone
 import org.joda.time.LocalDate
@@ -40,7 +41,7 @@ class Watcher(private val target: WatcherTarget) {
             last = days.lastOrNull()?.date ?: LocalDate.now(DateTimeZone.UTC).plusDays(1)
             daysFilled.add(WatcherDayModel(last.minusDays(i), false, 0))
         }
-        return WatcherModel("${target.name.hashCode()}", target.name, status.name.lowercase().replaceFirstChar { it.uppercase() }, daysFilled)
+        return WatcherModel("${target.name.hashCode()}", target.name, status.nameFormatted(), daysFilled)
     }
 
     companion object {
