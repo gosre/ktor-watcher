@@ -41,11 +41,13 @@ fun Application.watcher() {
         launch {
             var currentInterval = target.interval
             while (true) {
+                val start = System.currentTimeMillis()
                 val response = client.request(target.host) {
                     method = HttpMethod.Get
                     //note: not any real performance gain in using head requests instead
                     //also some servers are not configured properly to respond to them
                 }
+                val elapsed = System.currentTimeMillis() - start
                 val today = watcher.today()
                 if (response.status == HttpStatusCode.OK) {
                     if (watcher.status == WatcherStatus.OFFLINE) {
@@ -66,8 +68,8 @@ fun Application.watcher() {
                     //increment down counter by 1 minute
                     today.downTimeMinutes++
                 }
-                log.debug("Status for '${target.name}': ${response.status}")
-                delay(currentInterval * 60_000L)
+                log.debug("${target.name}: Elapsed=${elapsed}ms Status=${response.status}")
+                delay(((currentInterval * 60_000L) - elapsed).coerceAtLeast(1))
             }
         }
     }
