@@ -24,7 +24,7 @@ data class WatcherThymeleafModel(
     val id: Int,
     val name: String,
     val status: String,
-    val days: List<WatcherDayThymeleafModel> = ArrayList()
+    val days: List<WatcherDayThymeleafModel>
 )
 
 class WatcherDayThymeleafModel(

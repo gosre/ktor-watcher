@@ -52,11 +52,11 @@ object WatcherDayTable : Table("watcher_days") {
     private val date: Column<LocalDate> = date("date")
     private val downtime: Column<Int> = integer("downtime")
 
-    fun getAll(watcherId: Int): List<WatcherDayTableModel> = transaction {
+    fun getAll(watcherId: Int, limit: Int): List<WatcherDayTableModel> = transaction {
         WatcherDayTable
             .select { WatcherDayTable.watcherId eq watcherId }
             .orderBy(date to SortOrder.DESC)
-            .limit(90)
+            .limit(limit)
             .map { toModel(it) }
     }
 

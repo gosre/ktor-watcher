@@ -12,6 +12,7 @@ import me.claytonw.watcher.WatcherDayTable
 import me.claytonw.watcher.WatcherTable
 import java.time.LocalDate
 import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 
 fun Application.configureRouting() {
     routing {
@@ -24,31 +25,33 @@ fun Application.configureRouting() {
 
         get("/") {
             val displayPeriodDays = 90
-
             val model = HashMap<String, Any>()
+
+            //global variables
             model["day_count"] = displayPeriodDays
 
+            //add watcher data
+            val now = LocalDate.now(ZoneOffset.UTC)
             val watchers = WatcherTable.getAll().map { watcherModel ->
-                val daysRecorded = WatcherDayTable.getAll(watcherModel.id).toMutableList()
-                val daysThymeleaf = daysRecorded.map { dayModel ->
-                    WatcherDayThymeleafModel(dayModel.date, true, dayModel.downtime)
-                }.toMutableList()
-                //add filler entries for missing days over the last period
-                if (daysRecorded.size < displayPeriodDays) {
-                    val mostRecent: LocalDate = if (daysRecorded.isEmpty()) {
-                        LocalDate.now(ZoneOffset.UTC)
+                //grab previously recorded days and map to the number of days in the past each was from today
+                val daysRecorded = WatcherDayTable.getAll(watcherModel.id, displayPeriodDays)
+                    .associateBy({ChronoUnit.DAYS.between(it.date, now).toInt()}, {it})
+
+                //create an array of fixed size days and add missing entries over the period
+                val daysThymeleaf = Array(displayPeriodDays) { index ->
+                    if (daysRecorded.containsKey(index)) {
+                        val day = daysRecorded.getValue(index)
+                        return@Array WatcherDayThymeleafModel(day.date, true, day.downtime)
                     } else {
-                        daysRecorded.maxOf { it.date }
-                    }
-                    for (i in 1L..(displayPeriodDays - daysRecorded.size)) {
-                        daysThymeleaf.add(WatcherDayThymeleafModel(mostRecent.minusDays(i), false, 0))
+                        return@Array WatcherDayThymeleafModel(now.minusDays(index.toLong()), false, 0)
                     }
                 }
+
                 return@map WatcherThymeleafModel(
                     watcherModel.id,
                     watcherModel.name,
                     watcherModel.status.nameFormatted(),
-                    daysThymeleaf
+                    daysThymeleaf.toList()
                 )
             }
             model["watchers"] = watchers
