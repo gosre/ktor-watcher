@@ -1,21 +1,38 @@
+@file:Suppress("unused")
+
 package me.claytonw.model
 
-import org.joda.time.LocalDate
-import org.joda.time.format.ISODateTimeFormat
+import me.claytonw.watcher.WatcherStatus
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
-data class WatcherModel(
-    val pk: String,
+data class WatcherTableModel(
+    val id: Int,
     val name: String,
-    val status: String,
-    val days: List<WatcherDayModel>
+    val endpoint: String,
+    val updateInterval: Int,
+    var status: WatcherStatus = WatcherStatus.OPERATIONAL
 )
 
-class WatcherDayModel(
+data class WatcherDayTableModel(
+    val watcherId: Int,
+    val date: LocalDate,
+    var downtime: Int = 0
+)
+
+data class WatcherThymeleafModel(
+    val id: Int,
+    val name: String,
+    val status: String,
+    val days: List<WatcherDayThymeleafModel> = ArrayList()
+)
+
+class WatcherDayThymeleafModel(
     localDate: LocalDate,
     val exists: Boolean,
     val downtime: Int
 ) {
 
-    val date: String = localDate.toString(ISODateTimeFormat.date())
+    val date: String = localDate.format(DateTimeFormatter.ISO_DATE)
 
 }

@@ -1,7 +1,6 @@
-targets:
-    - name: "Personal Website"
-      host: "https://claytonw.me"
-      interval: 1
-    - name: "Google"
-      host: "https://google.com"
-      interval: 2
+mysql:
+    host: "localhost"
+    port: 3306
+    username: "clayton"
+    password: "Tqeu77Cg"
+    database: "ktor_watcher"

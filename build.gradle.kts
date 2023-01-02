@@ -4,6 +4,8 @@ val logback_version: String by project
 val krontab_version: String by project
 val kaml_verison: String by project
 val joda_version: String by project
+val exposed_version: String by project
+val mysql_connector_version: String by project
 
 plugins {
     kotlin("jvm") version "1.7.22"
@@ -33,6 +35,11 @@ dependencies {
     implementation("io.ktor:ktor-server-thymeleaf:$ktor_version")
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
+
+    implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
+    implementation("mysql:mysql-connector-java:$mysql_connector_version")
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
 

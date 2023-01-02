@@ -11,7 +11,7 @@
 
         function getWatcher(key) {
             for (const watcher of watchers) {
-                if (watcher.pk == key) {
+                if (watcher.id == key) {
                     return watcher;
                 }
             }
@@ -68,7 +68,7 @@
                 </div>
                 <div class="sixteen wide column">
                     <svg class="days" viewBox="0 0 448 40" preserveAspectRatio="none">
-                        <rect th:each="day, iStat : ${watcher.days}" th:classappend="${day.exists}? ((${day.downtime} &gt; 0)? red : green) : grey" th:x="(${day_count} - ${iStat.index} - 1) * 5" th:data-key="${watcher.pk}" th:data-day="${iStat.index}"></rect>
+                        <rect th:each="day, iStat : ${watcher.days}" th:classappend="${day.exists}? ((${day.downtime} &gt; 0)? red : green) : grey" th:x="(${day_count} - ${iStat.index} - 1) * 5" th:data-key="${watcher.id}" th:data-day="${iStat.index}"></rect>
                     </svg>
                 </div>
             </div>
