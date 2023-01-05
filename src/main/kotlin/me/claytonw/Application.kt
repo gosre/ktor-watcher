@@ -22,7 +22,10 @@ import me.claytonw.watcher.WatcherStatus
 import me.claytonw.watcher.WatcherTable
 import me.claytonw.watcher.config.WatcherConfiguration
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.exists
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
+import kotlin.system.exitProcess
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -40,6 +43,13 @@ fun Application.watcher() {
 
     val mysql = config.mysql
     Database.connect("jdbc:mysql://${mysql.username}:${mysql.password}@${mysql.host}:${mysql.port}/${mysql.database}?serverTimezone=UTC")
+
+    transaction {
+        if (!WatcherTable.exists() || !WatcherDayTable.exists()) {
+            log.error("Schema `${mysql.database}` does not have the proper tables to continue.")
+            exitProcess(2)
+        }
+    }
 
     launch {
         WatcherTable.getAll().forEach { watcher ->
