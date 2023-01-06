@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head th:replace="fragments/watcher :: head"></head>
+<head th:replace="~{fragments/watcher :: head}"></head>
 <body>
     <h1>Watchers</h1>
     <hr>
     <div class="container">
         <div id="watchers">
             <th:block th:each="watcher : ${watchers}">
-                <div th:replace="fragments/watcher :: watcher(${watcher})"></div>
+                <div th:replace="~{fragments/watcher :: watcher(${watcher})}"></div>
             </th:block>
         </div>
     </div>
