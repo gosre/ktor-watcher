@@ -7,7 +7,7 @@
     <div class="container">
         <div id="watchers">
             <th:block th:each="watcher : ${watchers}">
-                <div th:replace="~{fragments/watcher :: watcher(${watcher})}"></div>
+                <div th:replace="~{fragments/watcher :: watcher(${watcher.value})}"></div>
             </th:block>
         </div>
     </div>

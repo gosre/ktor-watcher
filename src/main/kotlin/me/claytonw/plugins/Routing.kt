@@ -32,7 +32,7 @@ fun Application.configureRouting() {
 
             //add watcher data
             val now = LocalDate.now(ZoneOffset.UTC)
-            val watchers = WatcherTable.getAll().map { watcherModel ->
+            model["watchers"] = WatcherTable.getAll().associateBy({ it.id }, {watcherModel ->
                 //grab previously recorded days and map to the number of days in the past each was from today
                 val daysRecorded = WatcherDayTable.getAll(watcherModel.id, displayPeriodDays)
                     .associateBy({ChronoUnit.DAYS.between(it.date, now).toInt()}, {it})
@@ -47,14 +47,13 @@ fun Application.configureRouting() {
                     }
                 }
 
-                return@map WatcherThymeleafModel(
+                return@associateBy WatcherThymeleafModel(
                     watcherModel.id,
                     watcherModel.name,
                     watcherModel.status.nameFormatted(),
                     daysThymeleaf.toList()
                 )
-            }
-            model["watchers"] = watchers
+            })
 
             call.respond(ThymeleafContent("index", model))
         }
