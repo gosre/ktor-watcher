@@ -9,14 +9,16 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.engine.*
 import io.ktor.server.http.content.*
+import io.ktor.server.netty.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import me.claytonw.plugins.configureThymeleaf
 import me.claytonw.plugins.configureRouting
 import me.claytonw.plugins.configureSerialization
+import me.claytonw.plugins.configureThymeleaf
 import me.claytonw.watcher.WatcherDayTable
 import me.claytonw.watcher.WatcherStatus
 import me.claytonw.watcher.WatcherTable
@@ -24,10 +26,23 @@ import me.claytonw.watcher.config.WatcherConfiguration
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.exists
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.io.File
+import org.slf4j.LoggerFactory
+import java.sql.SQLException
 import kotlin.system.exitProcess
 
-fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
+fun main() {
+    val logger = LoggerFactory.getLogger(Application::class.java)
+    val configStream = Application::class.java.classLoader.getResourceAsStream("watcher.yaml")
+    if (configStream == null) {
+        logger.error("Could not find watcher configuration. Exiting...")
+        exitProcess(2)
+    }
+    val config = Yaml.default.decodeFromStream<WatcherConfiguration>(configStream)
+    embeddedServer(Netty, host = config.host, port = config.port) {
+        server()
+        watcher(config)
+    }.start(wait = true)
+}
 
 fun Application.server() {
     configureThymeleaf()
@@ -35,18 +50,21 @@ fun Application.server() {
     configureRouting()
 }
 
-fun Application.watcher() {
+fun Application.watcher(config: WatcherConfiguration) {
     val client = HttpClient(CIO)
-    val config = Yaml.default.decodeFromStream<WatcherConfiguration>(
-        File("${System.getProperty("user.dir")}/src/main/resources/watcher.yaml").inputStream()
-    )
 
     val mysql = config.mysql
-    Database.connect("jdbc:mysql://${mysql.username}:${mysql.password}@${mysql.host}:${mysql.port}/${mysql.database}?serverTimezone=UTC")
+    Database.connect(config.mysql.toConnectorString() + "?serverTimezone=UTC")
 
     transaction {
-        if (!WatcherTable.exists() || !WatcherDayTable.exists()) {
-            log.error("Schema `${mysql.database}` does not have the proper tables to continue.")
+        try {
+            if (!WatcherTable.exists() || !WatcherDayTable.exists()) {
+                log.error("Schema `${mysql.database}` does not have the proper tables to continue.")
+                exitProcess(2)
+            }
+        } catch (e: SQLException) {
+            log.error("MySQL connectivity issue, please check configuration file and database permissions.")
+            e.printStackTrace()
             exitProcess(2)
         }
     }
