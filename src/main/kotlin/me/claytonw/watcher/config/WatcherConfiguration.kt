@@ -3,7 +3,12 @@ package me.claytonw.watcher.config
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class WatcherConfiguration(val host: String = "0.0.0.0", val port: Int = 8080, val mysql: MySQLConfiguration)
+data class WatcherConfiguration(
+    val host: String = "0.0.0.0",
+    val port: Int = 8080,
+    val displayPeriod: Int = 90,
+    val mysql: MySQLConfiguration
+)
 
 @Serializable
 data class MySQLConfiguration(

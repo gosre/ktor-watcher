@@ -39,15 +39,15 @@ fun main() {
     }
     val config = Yaml.default.decodeFromStream<WatcherConfiguration>(configStream)
     embeddedServer(Netty, host = config.host, port = config.port) {
-        server()
+        server(config)
         watcher(config)
     }.start(wait = true)
 }
 
-fun Application.server() {
+fun Application.server(config: WatcherConfiguration) {
     configureThymeleaf()
     configureSerialization()
-    configureRouting()
+    configureRouting(config)
 }
 
 fun Application.watcher(config: WatcherConfiguration) {

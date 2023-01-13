@@ -1,3 +1,4 @@
+displayPeriod: 90
 port: 8080
 mysql:
     host: "localhost"
