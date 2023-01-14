@@ -1,4 +1,4 @@
-package me.claytonw.plugins
+package me.claytonw.plugin
 
 
 import io.ktor.server.application.*

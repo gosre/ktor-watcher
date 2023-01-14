@@ -1,4 +1,4 @@
-package me.claytonw.plugins
+package me.claytonw.plugin
 
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -7,7 +7,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
 import me.claytonw.model.WatcherDayThymeleafModel
 import me.claytonw.model.WatcherThymeleafModel
-import me.claytonw.util.ext.nameFormatted
+import me.claytonw.util.nameFormatted
 import me.claytonw.watcher.WatcherDayTable
 import me.claytonw.watcher.WatcherTable
 import me.claytonw.watcher.config.WatcherConfiguration
@@ -21,7 +21,6 @@ fun Application.configureRouting(config: WatcherConfiguration) {
         static("/") {
             staticBasePackage = "static"
             resources(".") //serve all files recursively in base package
-            //defaultResource("index.html")
         }
 
         get("/") {
@@ -56,10 +55,6 @@ fun Application.configureRouting(config: WatcherConfiguration) {
             })
 
             call.respond(ThymeleafContent("index", model))
-        }
-
-        get("/watchers/") {
-            //call.respond(HttpStatusCode.OK, Watcher.watchers)
         }
 
     }

@@ -1,4 +1,4 @@
-package me.claytonw.util.ext
+package me.claytonw.util
 
 fun Enum<*>.nameFormatted() = name
     .lowercase()

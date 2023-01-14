@@ -16,9 +16,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import me.claytonw.plugins.configureRouting
-import me.claytonw.plugins.configureSerialization
-import me.claytonw.plugins.configureThymeleaf
+import me.claytonw.plugin.configureRouting
+import me.claytonw.plugin.configureSerialization
+import me.claytonw.plugin.configureThymeleaf
 import me.claytonw.watcher.WatcherDayTable
 import me.claytonw.watcher.WatcherStatus
 import me.claytonw.watcher.WatcherTable
@@ -81,7 +81,7 @@ fun Application.watcher(config: WatcherConfiguration) {
                         //note: not any real performance gain in using head requests instead
                         //also some servers are not configured properly to respond to them
                     }
-                    val today = WatcherDayTable.getToday(watcher.id)
+                    val today = WatcherDayTable.getOrInsert(watcher.id)
                     if (response.status == HttpStatusCode.OK) {
                         if (watcher.status == WatcherStatus.OFFLINE) {
                             //host was previously down but is now OK

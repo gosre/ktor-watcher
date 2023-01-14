@@ -1,4 +1,4 @@
-package me.claytonw.plugins
+package me.claytonw.plugin
 
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
