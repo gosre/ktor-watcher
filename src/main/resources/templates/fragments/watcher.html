@@ -65,7 +65,7 @@
                     </div>
                 </div>
                 <div class="sixteen wide column">
-                    <svg class="days" viewBox="0 0 448 40" preserveAspectRatio="none">
+                    <svg class="days" th:viewBox="|0 0 ${display_period * 5 - 2} 40|" preserveAspectRatio="none">
                         <rect th:each="day, iStat : ${watcher.days}" th:classappend="${day.exists}? ((${day.downtime} &gt; 0)? red : green) : grey" th:x="(${display_period} - ${iStat.index} - 1) * 5" th:data-key="${watcher.id}" th:data-day="${iStat.index}"></rect>
                     </svg>
                 </div>
